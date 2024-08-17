@@ -7,16 +7,14 @@ Before conducting the analysis, I preprocessed the data to ensure its integrity 
 Loading the data into a NumPy array using np.genfromtxt().
 Converting data types to ensure compatibility with NumPy's operations.
 
-## Data Analysis
+# Data Analysis
 
 ## Average speed of Taxi's
-To calculate the Average speed of Taxi's, I used the distance and time data
-
+To calculate the Average speed of Taxi's, I used the distance and time data.  
 This provides a quick and efficient way to determine the average speed taxi rides in the dataset.
 
 ## Rides in Feburary 
-To calculate the rides in specific month, I used the np.count_nonzero() function  and boolean array on month column
-
+To calculate the rides in specific month, I used the np.count_nonzero() function  and boolean array on month column.
 By selecting the second column (index 1) of the NumPy array, which represents the months, and applying the np.count_nonzero() function, I obtained the average fare per ride.
 
 ## Rides with tip more than $50

@@ -1,4 +1,4 @@
-<h1>Taxi Rides data Analysis</h1> <br/>
+<h1>Taxi Rides Analysis</h1>
 
 # Introduction
 In this project, I analyzed taxi ride data using NumPy, a powerful library for numerical computing in Python. The dataset contains information about various taxi rides, including the taxi ID, passenger count, and fare amount. By leveraging NumPy's efficient data structures and functions, I performed various analyses to gain insights into the taxi ride patterns.

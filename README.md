@@ -12,7 +12,7 @@ This project provides an exploratory data analysis (EDA) of NYC taxi rides using
 - **Data Loading:** Efficiently loads and inspects a large NYC taxi dataset.
 - **Data Cleaning:** Handles missing values and ensures data integrity.
 - **Statistical Analysis:** Computes key metrics such as average speed, ride counts by month, and tip distributions.
-- **Visualization:** (Optional) Visualizes trends and distributions for deeper insights.
+- **Visualization:** Visualizes trends and distributions for deeper insights.
 - **Actionable Insights:** Summarizes findings for practical use.
 
 ## Dataset
@@ -36,6 +36,19 @@ The dataset (`nyc_taxis.csv`) contains information about NYC taxi rides, includi
 
 - **Drop-offs at NYC Airport:**  
   Quantifies the number of rides ending at NYC airports.
+
+## Data Visualization
+
+To better understand the data, we included the following visualizations:
+
+- **Distribution of Taxi Speeds:**
+  - A histogram showing the distribution of calculated taxi speeds (in mph).
+  - Outliers and unrealistic values (e.g., speeds outside 0–100 mph) are filtered out for clarity.
+  - This helps reveal the most common speed ranges and spot any anomalies in the data.
+
+- **Number of Rides by Month:**
+  - A bar chart displaying the number of taxi rides for each month.
+  - This visualization highlights seasonal trends and peaks in taxi usage throughout the year.
 
 ## How to Run
 

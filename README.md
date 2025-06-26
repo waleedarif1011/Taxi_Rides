@@ -1,27 +1,72 @@
-<h1>Taxi Rides Analysis</h1>
+# NYC Taxi Rides Data Analysis
 
-# Introduction
-In this project, I analyzed taxi ride data using NumPy, a powerful library for numerical computing in Python. The dataset contains information about various taxi rides, including the taxi ID, passenger count, and fare amount. By leveraging NumPy's efficient data structures and functions, I performed various analyses to gain insights into the taxi ride patterns.
-# Data Preprocessing
-Before conducting the analysis, I preprocessed the data to ensure its integrity and suitability for the intended analyses. This included:
-Loading the data into a NumPy array using np.genfromtxt().
-Converting data types to ensure compatibility with NumPy's operations.
+> “The goal is to turn data into information, and information into insight.”  
+> — Carly Fiorina
 
-# Data Analysis
+## Overview
 
-## Average speed of Taxi's
-To calculate the Average speed of Taxi's, I used the distance and time data.  
-This provides a quick and efficient way to determine the average speed taxi rides in the dataset.
+This project provides an exploratory data analysis (EDA) of NYC taxi rides using Python and NumPy. The analysis uncovers patterns in taxi usage, passenger behavior, and operational metrics that can inform business decisions and urban planning.
 
-## Rides in Feburary 
-To calculate the rides in specific month, I used the np.count_nonzero() function  and boolean array on month column.
-By selecting the second column (index 1) of the NumPy array, which represents the months, and applying the np.count_nonzero() function, I obtained the average fare per ride.
+## Features
 
-## Rides with tip more than $50
-To find the Rides with tip more than $50, I used the tip count and used boolean array,
+- **Data Loading:** Efficiently loads and inspects a large NYC taxi dataset.
+- **Data Cleaning:** Handles missing values and ensures data integrity.
+- **Statistical Analysis:** Computes key metrics such as average speed, ride counts by month, and tip distributions.
+- **Visualization:** (Optional) Visualizes trends and distributions for deeper insights.
+- **Actionable Insights:** Summarizes findings for practical use.
 
-## Number of drops ar NYC Airport
-Used drop data column and get id of NYC Airport and count them.
+## Dataset
 
-# Conclusion
-In this project, I demonstrated how to use NumPy for analyzing taxi ride data efficiently. By leveraging NumPy's powerful functions and data structures, I was able to perform various analyses, such as calculating the Average speed of Taxi's, Rides in Feburary , Rides with tip more than $50, and Number of drops ar NYC Airport.
+The dataset (`nyc_taxis.csv`) contains information about NYC taxi rides, including:
+- Pickup and drop-off times and locations
+- Trip distance and duration
+- Fare and tip amounts
+- Payment types
+
+## Analysis Highlights
+
+- **Average Speed of Taxis:**  
+  Calculated using trip distance and duration, considering only valid trips.
+
+- **Rides in February:**  
+  Counts the number of rides that occurred in the month of February.
+
+- **Rides with Tips Greater Than $50:**  
+  Identifies high-tip rides for further business insights.
+
+- **Drop-offs at NYC Airport:**  
+  Quantifies the number of rides ending at NYC airports.
+
+## How to Run
+
+1. Clone this repository.
+2. Ensure you have Python 3.x, NumPy, and Matplotlib installed.
+3. Place `nyc_taxis.csv` in the project directory.
+4. Open and run `CabsDataAnalysis.ipynb` in Jupyter Notebook or JupyterLab.
+
+## Example Usage
+
+```python
+import numpy as np
+taxi = np.genfromtxt('nyc_taxis.csv', delimiter=',', skip_header=1)
+# Further analysis as shown in the notebook
+```
+
+## Results
+
+- The average speed of NYC taxis is approximately **32 mph**.
+- There were over **13,000 rides** in February.
+- **16 rides** had tips greater than $50.
+- Over **11,800 rides** ended at NYC airports.
+
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request for improvements or new features.
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+*For more details, see the full analysis in `CabsDataAnalysis.ipynb`.*

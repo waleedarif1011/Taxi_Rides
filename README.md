@@ -20,6 +20,12 @@ Interactive **exploratory analytics** and a lightweight **trip fare / tip estima
 
 > **Honest positioning:** this is a portfolio EDA + demo Space — not a production ML pricing or dispatch product. After the Hugging Face Space is created (see [Deploy](#deploy-hugging-face-space)), open the badge URL above. Until then, run locally with `python app.py`.
 
+## Sharper insight — tip rate by payment & hour
+
+Cash trips in TLC files almost never show a tip (electronic `tip_amount` ≈ $0). Credit-card trips land near a **~22% median tip of fare**, and that rate stays flat across pickup-hour buckets once you filter to cards only.
+
+![Tip rate by payment type and hour](assets/tip_rate_insight.png)
+
 ## Key findings
 
 | KPI | Value |
@@ -28,6 +34,7 @@ Interactive **exploratory analytics** and a lightweight **trip fare / tip estima
 | February rides | **13,333** |
 | Tips greater than $50 | **16** |
 | Airport drop-offs (JFK + LGA + EWR) | **28,497** (JFK 11,832 · LGA 16,602 · EWR 63) |
+| Credit-card median tip % of fare | **~22%** (cash recorded tip ≈ 0%) |
 
 ![Hourly demand](assets/hourly_demand.png)
 
@@ -57,7 +64,7 @@ python -m pytest -q
 ## Method (short)
 
 - **Data:** `data/nyc_taxis.csv` (~89,560 trips) with pickup calendar fields, location codes, distance, duration, fare components, and tip.
-- **Analytics:** vectorized NumPy/pandas KPIs in `src/analytics.py` (mean speed, February volume, high tips, airport breakdown, hourly/monthly demand).
+- **Analytics:** vectorized NumPy/pandas KPIs in `src/analytics.py` (mean speed, February volume, high tips, airport breakdown, hourly/monthly demand, tip rate by payment type / hour).
 - **Estimator:** `src/fare_model.py` trains Ridge and HistGradientBoosting multi-output models on pickup hour / day / month, location codes, distance, and duration to predict `total_amount` + `tip_amount`. Metrics land in `artifacts/metrics.json`.
 - **Notebook:** original walkthrough preserved at [`notebooks/CabsDataAnalysis.ipynb`](notebooks/CabsDataAnalysis.ipynb) (path helper prefers `data/nyc_taxis.csv`).
 
@@ -91,7 +98,7 @@ src/fare_model.py      train / load / predict fare + tip
 src/paths.py           data path resolution (data/ or legacy root)
 data/nyc_taxis.csv     trip sample (~5MB)
 artifacts/             fare_model.joblib + metrics.json
-assets/                exported KPI charts
+assets/                exported KPI charts (incl. tip_rate_insight.png)
 notebooks/             original CabsDataAnalysis.ipynb
 scripts/generate_figures.py
 tests/                 pytest KPI + model sanity suite

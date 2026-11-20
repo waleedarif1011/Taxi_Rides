@@ -15,6 +15,8 @@ from src.analytics import (
     hourly_demand,
     load_taxi_array,
     load_taxi_frame,
+    tip_rate_by_hour,
+    tip_rate_by_payment,
 )
 from src.fare_model import METRICS_PATH, MODEL_PATH, load_model, predict_fare, train
 from src.paths import ASSETS_DIR, ROOT, resolve_data_path
@@ -94,6 +96,25 @@ def test_hourly_demand_covers_day(df):
     assert int(counts.sum()) == len(df)
 
 
+def test_tip_rate_by_payment_cash_near_zero(df):
+    by_pay = tip_rate_by_payment(df)
+    assert set(by_pay["payment_type"]) >= {1, 2}
+    card = by_pay.loc[by_pay["payment_type"] == 1].iloc[0]
+    cash = by_pay.loc[by_pay["payment_type"] == 2].iloc[0]
+    assert card["median_tip_pct"] > 15.0
+    assert cash["median_tip_pct"] == pytest.approx(0.0)
+    assert cash["pct_with_tip"] == pytest.approx(0.0)
+
+
+def test_tip_rate_by_hour_card_stable(df):
+    by_hour = tip_rate_by_hour(df, payment_type=1)
+    assert len(by_hour) == 6
+    assert by_hour.notna().all()
+    # Card median tip % of fare stays in a narrow band across time buckets.
+    assert float(by_hour.min()) > 15.0
+    assert float(by_hour.max()) < 30.0
+
+
 def test_filter_and_summary(df):
     filtered = filter_trips(df, months=[2], time_bands=[2, 3], airport="JFK")
     summary = filtered_summary(filtered)
@@ -150,12 +171,13 @@ def test_short_trip_cheaper_than_long(artifact):
 def test_assets_exist_or_skippable():
     # Charts are generated in CI/local via scripts/generate_figures.py; require when present.
     expected = [
+        "tip_rate_insight.png",
         "hourly_demand.png",
         "airport_dropoffs.png",
         "speed_vs_distance.png",
         "fare_breakdown.png",
     ]
     present = [ASSETS_DIR / name for name in expected if (ASSETS_DIR / name).is_file()]
-    # After generate_figures in the upgrade flow, all four should exist.
+    # After generate_figures in the upgrade flow, all five should exist.
     if present:
-        assert len(present) == 4
+        assert len(present) == 5

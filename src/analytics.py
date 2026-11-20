@@ -40,6 +40,14 @@ TIME_BAND_LABELS = {
     5: "20–23",
 }
 
+# TLC-style payment codes in this Dataquest sample.
+PAYMENT_LABELS = {
+    1: "Credit card",
+    2: "Cash",
+    3: "No charge",
+    4: "Dispute",
+}
+
 COLUMN_NAMES = [
     "pickup_year",
     "pickup_month",
@@ -155,6 +163,61 @@ def airport_dropoff_breakdown(df: pd.DataFrame) -> pd.Series:
             "LGA": int((drop == AIRPORT_CODES["LGA"]).sum()),
             "EWR": int((drop == AIRPORT_CODES["EWR"]).sum()),
         }
+    )
+
+
+def tip_pct_of_fare(df: pd.DataFrame) -> pd.Series:
+    """Tip as a percent of fare (fare clipped away from zero)."""
+    fare = df["fare_amount"].astype(float).clip(lower=0.01)
+    return (df["tip_amount"].astype(float) / fare) * 100.0
+
+
+def tip_rate_by_payment(df: pd.DataFrame) -> pd.DataFrame:
+    """Median tip % of fare, ride count, and share with a recorded tip by payment type.
+
+    Cash / no-charge / dispute trips almost never carry an electronic tip field —
+    a classic NYC TLC EDA caveat, not evidence that riders tip $0.
+    """
+    frame = df.copy()
+    frame["tip_pct"] = tip_pct_of_fare(frame)
+    frame["payment_type"] = frame["payment_type"].astype(int)
+    rows: list[dict[str, Any]] = []
+    for code in sorted(frame["payment_type"].unique()):
+        subset = frame[frame["payment_type"] == code]
+        label = PAYMENT_LABELS.get(code, f"Type {code}")
+        rows.append(
+            {
+                "payment_type": code,
+                "label": label,
+                "rides": int(len(subset)),
+                "median_tip_pct": float(subset["tip_pct"].median()),
+                "mean_tip_pct": float(subset["tip_pct"].mean()),
+                "pct_with_tip": float((subset["tip_amount"].astype(float) > 0).mean() * 100.0),
+            }
+        )
+    return pd.DataFrame(rows).sort_values("payment_type").reset_index(drop=True)
+
+
+def tip_rate_by_hour(
+    df: pd.DataFrame,
+    *,
+    payment_type: int | None = 1,
+) -> pd.Series:
+    """Median tip % of fare by pickup time bucket.
+
+    Defaults to credit-card trips (``payment_type=1``) so the series is not
+    flattened by cash trips that record tip_amount = 0.
+    """
+    frame = df
+    if payment_type is not None:
+        frame = frame[frame["payment_type"].astype(int) == int(payment_type)]
+    tip_pct = tip_pct_of_fare(frame)
+    bands = frame["pickup_time"].astype(int)
+    return (
+        tip_pct.groupby(bands)
+        .median()
+        .reindex(range(6), fill_value=float("nan"))
+        .sort_index()
     )
 
 

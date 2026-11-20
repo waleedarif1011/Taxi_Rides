@@ -132,7 +132,12 @@ def explore(months: list[str], hour_band: str, airport: str):
     fig.tight_layout()
 
     chart = None
-    for name in ("hourly_demand.png", "airport_dropoffs.png", "fare_breakdown.png"):
+    for name in (
+        "tip_rate_insight.png",
+        "hourly_demand.png",
+        "airport_dropoffs.png",
+        "fare_breakdown.png",
+    ):
         path = ASSETS_DIR / name
         if path.is_file():
             chart = str(path)

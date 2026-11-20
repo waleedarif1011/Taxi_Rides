@@ -1,104 +1,103 @@
-# 🚕 NYC Taxi Rides Data Analysis
-
-> “The goal is to turn data into information, and information into insight.”  
-> — Carly Fiorina
-
+---
+title: NYC Taxi Explorer
+emoji: 🚕
+colorFrom: teal
+colorTo: slate
+sdk: gradio
+sdk_version: 5.49.1
+app_file: app.py
+pinned: false
+license: mit
 ---
 
-## 📊 Overview
+# NYC Taxi Rides — Explorer & Fare Calculator
 
-This project provides an **exploratory data analysis (EDA)** of NYC taxi rides using Python and NumPy. The analysis uncovers patterns in taxi usage, passenger behavior, and operational metrics that can inform business decisions and urban planning.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Hugging%20Face%20Spaces-yellow?logo=huggingface)](https://huggingface.co/spaces/waleedarif1011/taxi-rides)
+[![CI](https://github.com/waleedarif1011/taxi_rides/actions/workflows/ci.yml/badge.svg)](https://github.com/waleedarif1011/taxi_rides/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
----
+Interactive **exploratory analytics** and a lightweight **trip fare / tip estimator** on ~89k NYC taxi trips (Jan–Jun 2016 sample).
 
-## ✨ Features
+> **Honest positioning:** this is a portfolio EDA + demo Space — not a production ML pricing or dispatch product. After the Hugging Face Space is created (see [Deploy](#deploy-hugging-face-space)), open the badge URL above. Until then, run locally with `python app.py`.
 
-- 🚗 **Data Loading:** Efficiently loads and inspects a large NYC taxi dataset.
-- 🧹 **Data Cleaning:** Handles missing values and ensures data integrity.
-- 📈 **Statistical Analysis:** Computes key metrics such as average speed, ride counts by month, and tip distributions.
-- 📊 **Visualization:** Visualizes trends and distributions for deeper insights.
-- 💡 **Actionable Insights:** Summarizes findings for practical use.
+## Key findings
 
----
+| KPI | Value |
+|-----|-------|
+| Mean trip speed | **32.24 mph** |
+| February rides | **13,333** |
+| Tips greater than $50 | **16** |
+| Airport drop-offs (JFK + LGA + EWR) | **28,497** (JFK 11,832 · LGA 16,602 · EWR 63) |
 
-## 🗂️ Dataset
+![Hourly demand](assets/hourly_demand.png)
 
-The dataset (`nyc_taxis.csv`) contains information about NYC taxi rides, including:
-- 📍 Pickup and drop-off times and locations
-- 🛣️ Trip distance and duration
-- 💵 Fare and tip amounts
-- 💳 Payment types
+![Airport drop-offs](assets/airport_dropoffs.png)
 
----
+![Speed vs distance](assets/speed_vs_distance.png)
 
-## 🔍 Analysis Highlights
+![Average fare breakdown](assets/fare_breakdown.png)
 
-- **Average Speed of Taxis:**  
-  Calculated using trip distance and duration, considering only valid trips.
+## Quickstart
 
-- **Rides in February:**  
-  Counts the number of rides that occurred in the month of February.
-
-- **Rides with Tips Greater Than $50:**  
-  Identifies high-tip rides for further business insights.
-
-- **Drop-offs at NYC Airport:**  
-  Quantifies the number of rides ending at NYC airports.
-
----
-
-## 📊 Data Visualization
-
-To better understand the data, we included the following visualizations:
-
-- **Distribution of Taxi Speeds:**  
-  - 📉 Histogram of calculated taxi speeds (in mph), filtering out outliers (0–100 mph) for clarity.
-  - Reveals the most common speed ranges and spots any anomalies.
-
-- **Number of Rides by Month:**  
-  - 📊 Bar chart showing the number of taxi rides for each month.
-  - Highlights seasonal trends and peaks in taxi usage.
-
----
-
-## 🚀 How to Run
-
-1. ⬇️ Clone this repository.
-2. 🐍 Ensure you have Python 3.x, NumPy, and Matplotlib installed.
-3. 📂 Place `nyc_taxis.csv` in the project directory.
-4. 📝 Open and run `CabsDataAnalysis.ipynb` in Jupyter Notebook or JupyterLab.
-
----
-
-## 🧑‍💻 Example Usage
-
-```python
-import numpy as np
-taxi = np.genfromtxt('nyc_taxis.csv', delimiter=',', skip_header=1)
-# Further analysis as shown in the notebook
+```bash
+python -m pip install -r requirements.txt
+python -m src.fare_model            # train + write artifacts/
+python scripts/generate_figures.py  # export assets/*.png
+python app.py                       # Gradio demo at http://127.0.0.1:7860
+python -m pytest -q
 ```
 
----
+## Interactive demo
 
-## 🏁 Results
+`app.py` ships two tabs:
 
-- 🚕 The average speed of NYC taxis is approximately **32 mph**.
-- 📆 There were over **13,000 rides** in February.
-- 💸 **16 rides** had tips greater than $50.
-- ✈️ Over **11,800 rides** ended at NYC airports.
+1. **KPI Explorer** — filter by month, time of day, and airport drop-off; see ride volume, average speed, tip %, and hourly demand.
+2. **Fare & Tip Calculator** — enter distance, pickup hour, zones, and duration to estimate total fare and typical tip (HistGradientBoosting / Ridge multi-output regressor).
 
----
+## Method (short)
 
-## 🤝 Contributing
+- **Data:** `data/nyc_taxis.csv` (~89,560 trips) with pickup calendar fields, location codes, distance, duration, fare components, and tip.
+- **Analytics:** vectorized NumPy/pandas KPIs in `src/analytics.py` (mean speed, February volume, high tips, airport breakdown, hourly/monthly demand).
+- **Estimator:** `src/fare_model.py` trains Ridge and HistGradientBoosting multi-output models on pickup hour / day / month, location codes, distance, and duration to predict `total_amount` + `tip_amount`. Metrics land in `artifacts/metrics.json`.
+- **Notebook:** original walkthrough preserved at [`notebooks/CabsDataAnalysis.ipynb`](notebooks/CabsDataAnalysis.ipynb) (path helper prefers `data/nyc_taxis.csv`).
 
-Contributions are welcome! Please open an issue or submit a pull request for improvements or new features.
+## Tests & CI
 
----
+```bash
+python -m pytest -q
+```
 
-## 📄 License
+GitHub Actions runs figure generation + the same suite on every push/PR (`.github/workflows/ci.yml`).
 
-This project is licensed under the MIT License.
+## Deploy (Hugging Face Space)
 
----
+This repo is Space-ready (`app.py` + Gradio README frontmatter). Create and push:
 
-*For more details, see the full analysis in [`CabsDataAnalysis.ipynb`](CabsDataAnalysis.ipynb).*
+```bash
+# once: huggingface-cli login   # needs a write token with Spaces scope
+huggingface-cli repo create taxi-rides --type space --space_sdk gradio -y
+git remote add space https://huggingface.co/spaces/waleedarif1011/taxi-rides
+git push space HEAD:main
+```
+
+Or follow the checklist in [`docs/hf-space-deploy.md`](docs/hf-space-deploy.md).
+
+## Layout
+
+```
+app.py                 Gradio NYC Taxi Explorer & Fare Calculator
+src/analytics.py       KPI helpers + filters
+src/fare_model.py      train / load / predict fare + tip
+src/paths.py           data path resolution (data/ or legacy root)
+data/nyc_taxis.csv     trip sample (~5MB)
+artifacts/             fare_model.joblib + metrics.json
+assets/                exported KPI charts
+notebooks/             original CabsDataAnalysis.ipynb
+scripts/generate_figures.py
+tests/                 pytest KPI + model sanity suite
+docs/hf-space-deploy.md
+```
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).

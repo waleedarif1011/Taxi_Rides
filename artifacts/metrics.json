@@ -1,0 +1,43 @@
+{
+  "n_train": 70986,
+  "n_test": 17747,
+  "features": [
+    "pickup_time",
+    "pickup_dayofweek",
+    "pickup_month",
+    "pickup_location_code",
+    "dropoff_location_code",
+    "trip_distance",
+    "estimated_duration_min"
+  ],
+  "targets": [
+    "total_amount",
+    "tip_amount"
+  ],
+  "models": [
+    {
+      "name": "ridge",
+      "mae_total": 5.674735969229159,
+      "mae_tip": 3.8516228806445443,
+      "r2_total": 0.7643072003963194,
+      "r2_tip": 0.0992183408801478,
+      "mae_combined": 9.526358849873704
+    },
+    {
+      "name": "hist_gradient_boosting",
+      "mae_total": 4.309953012396825,
+      "mae_tip": 3.6288865235807193,
+      "r2_total": 0.860786642992099,
+      "r2_tip": 0.15986075868203242,
+      "mae_combined": 7.938839535977545
+    }
+  ],
+  "best": {
+    "name": "hist_gradient_boosting",
+    "mae_total": 4.309953012396825,
+    "mae_tip": 3.6288865235807193,
+    "r2_total": 0.860786642992099,
+    "r2_tip": 0.15986075868203242,
+    "mae_combined": 7.938839535977545
+  }
+}
